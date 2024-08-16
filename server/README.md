@@ -1,1 +1,7 @@
-#Good Things ToDo API
+# Good Things ToDo API
+
+## Stack:
+
+- TS
+- NestJS
+- MongoDB

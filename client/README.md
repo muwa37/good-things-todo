@@ -1,1 +1,8 @@
-#Good Things ToDo client
+# Good Things ToDo client
+
+## Stack:
+
+- TS
+- React
+- Tailwind
+- Vite

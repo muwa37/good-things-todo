@@ -6,12 +6,12 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) {}
   @Post('/login')
-  login(@Body() userDTO: UserDTO) {
-    return this.authService.login(userDTO);
+  async login(@Body() userDTO: UserDTO) {
+    return await this.authService.login(userDTO);
   }
 
   @Post('/registration')
-  registration(@Body() userDTO: UserDTO) {
-    this.authService.registration(userDTO);
+  async registration(@Body() userDTO: UserDTO) {
+    return await this.authService.registration(userDTO);
   }
 }

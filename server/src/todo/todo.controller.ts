@@ -16,8 +16,11 @@ export class TodoController {
   constructor(private todoService: TodoService) {}
 
   @Post(':userId')
-  create(@Body() createTodoDTO: TodoDTO, @Param('userId') userId: ObjectId) {
-    return this.todoService.create(createTodoDTO, userId);
+  async create(
+    @Body() createTodoDTO: TodoDTO,
+    @Param('userId') userId: ObjectId,
+  ) {
+    return await this.todoService.create(createTodoDTO, userId);
   }
 
   @Get('/findByUser/:userId')
@@ -26,12 +29,12 @@ export class TodoController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: ObjectId, @Body() updateTodoDTO: TodoDTO) {
-    return this.todoService.update(id, updateTodoDTO);
+  async update(@Param('id') id: ObjectId, @Body() updateTodoDTO: TodoDTO) {
+    return await this.todoService.update(id, updateTodoDTO);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: ObjectId) {
-    return this.todoService.delete(id);
+  async delete(@Param('id') id: ObjectId) {
+    return await this.todoService.delete(id);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { User } from 'src/user/user.schema';
@@ -19,10 +19,13 @@ export class TodoService {
       isDone: false,
       userId,
     });
-    user?.todos.push(todo);
-    await user?.save();
+    if (user) {
+      user.todos.push(todo);
+      await user.save();
+      return todo;
+    }
 
-    return todo;
+    throw new HttpException('user not found', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   async getByUserId(userId: ObjectId): Promise<Todo[]> {
@@ -30,14 +33,15 @@ export class TodoService {
     return todos;
   }
 
-  async update(id: ObjectId, updateTodoDTO: TodoDTO): Promise<Todo | null> {
+  async update(id: ObjectId, updateTodoDTO: TodoDTO): Promise<Todo> {
     const todo = await this.todoModel.findByIdAndUpdate(id, updateTodoDTO);
-
-    return todo;
+    if (todo) return todo;
+    throw new HttpException('todo not found', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  async delete(id: ObjectId): Promise<Todo | null> {
+  async delete(id: ObjectId): Promise<Todo> {
     const todo = await this.todoModel.findByIdAndDelete(id);
-    return todo;
+    if (todo) return todo;
+    throw new HttpException('todo not found', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

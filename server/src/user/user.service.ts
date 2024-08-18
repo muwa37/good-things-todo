@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { UserDTO } from './user.dto';
@@ -20,33 +20,35 @@ export class UserService {
     return users;
   }
 
-  async getOneByTag(tag: string): Promise<User | null> {
+  async getOneByTag(tag: string): Promise<User> {
     const user = await this.userModel.findOne({
       tag: tag,
     });
-    return user;
+    if (user) return user;
+    throw new HttpException('user not found', HttpStatus.BAD_REQUEST);
   }
 
-  async getOneById(id: ObjectId): Promise<User | null> {
+  async getOneById(id: ObjectId): Promise<User> {
     const user = await this.userModel.findById(id);
-    return user;
+    if (user) return user;
+    throw new HttpException('user not found', HttpStatus.BAD_REQUEST);
   }
 
-  async getFriendsById(id: ObjectId): Promise<User[] | null> {
+  async getFriendsById(id: ObjectId): Promise<User[]> {
     const user = await this.userModel.findById(id);
     if (user) return user.friends;
-    return null;
+    throw new HttpException('user not found', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  async update(id: ObjectId, updateUserDTO: UserDTO): Promise<User | null> {
+  async update(id: ObjectId, updateUserDTO: UserDTO): Promise<User> {
     const user = await this.userModel.findByIdAndUpdate(id, {
       ...updateUserDTO,
     });
-
-    return user;
+    if (user) return user;
+    throw new HttpException('user not found', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  async addFriend(id: ObjectId, friendId: ObjectId): Promise<User | null> {
+  async addFriend(id: ObjectId, friendId: ObjectId): Promise<User> {
     const user = await this.userModel.findById(id);
     console.log(friendId);
     const friend = await this.userModel.findById(friendId);
@@ -54,11 +56,15 @@ export class UserService {
       user.friends.push(friend);
       return friend;
     }
-    return null;
+    throw new HttpException(
+      'user or friend not found',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 
-  async delete(id: ObjectId): Promise<User | null> {
+  async delete(id: ObjectId): Promise<User> {
     const user = await this.userModel.findByIdAndDelete(id);
-    return user;
+    if (user) return user;
+    throw new HttpException('user not found', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

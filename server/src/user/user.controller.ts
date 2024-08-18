@@ -27,27 +27,27 @@ export class UserController {
   }
 
   @Get('/getFriends/:id')
-  getFriendsById(@Param('id') id: ObjectId) {
-    return this.userService.getFriendsById(id);
+  async getFriendsById(@Param('id') id: ObjectId) {
+    return await this.userService.getFriendsById(id);
   }
 
   @Get(':id')
-  getOneById(@Param('id') id: ObjectId) {
-    return this.userService.getOneById(id);
+  async getOneById(@Param('id') id: ObjectId) {
+    return await this.userService.getOneById(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: ObjectId, @Body() updateUserDTO: UserDTO) {
-    return this.userService.update(id, updateUserDTO);
+  async update(@Param('id') id: ObjectId, @Body() updateUserDTO: UserDTO) {
+    return await this.userService.update(id, updateUserDTO);
   }
 
   @Patch('/addFriend/:id')
-  addFriend(@Param('id') id: ObjectId, @Body() friendId: FriendDTO) {
-    return this.userService.addFriend(id, friendId.friendId);
+  async addFriend(@Param('id') id: ObjectId, @Body() friendDTO: FriendDTO) {
+    return await this.userService.addFriend(id, friendDTO.friendId);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: ObjectId) {
-    return this.userService.delete(id);
+  async delete(@Param('id') id: ObjectId) {
+    return await this.userService.delete(id);
   }
 }

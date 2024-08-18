@@ -20,6 +20,13 @@ export class UserService {
     return users;
   }
 
+  async getOneByTag(tag: string): Promise<User | null> {
+    const user = await this.userModel.findOne({
+      tag: tag,
+    });
+    return user;
+  }
+
   async getOneById(id: ObjectId): Promise<User | null> {
     const user = await this.userModel.findById(id);
     return user;

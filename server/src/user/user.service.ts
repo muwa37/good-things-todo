@@ -1,27 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { CreateUserDTO } from './user.dto';
+import { UserDTO } from './user.dto';
 import { User } from './user.schema';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async create(createUserDTO: CreateUserDTO): Promise<User> {
+  async create(createUserDTO: UserDTO): Promise<User> {
     const user = await this.userModel.create({ ...createUserDTO });
     return user;
   }
 
-  async getOne(tag: string): Promise<User | null> {
-    const user = await this.userModel.findOne({ tag });
+  async searchByTag(tag: string): Promise<User[]> {
+    const users = await this.userModel.find({
+      tag: { $regex: new RegExp(tag) },
+    });
+    return users;
+  }
+
+  async getOneById(id: ObjectId): Promise<User | null> {
+    const user = await this.userModel.findById(id);
     return user;
   }
 
-  async update(
-    id: ObjectId,
-    updateUserDTO: CreateUserDTO,
-  ): Promise<User | null> {
+  async update(id: ObjectId, updateUserDTO: UserDTO): Promise<User | null> {
     const user = await this.userModel.findByIdAndUpdate(id, {
       ...updateUserDTO,
     });

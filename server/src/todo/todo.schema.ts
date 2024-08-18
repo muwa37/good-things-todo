@@ -7,14 +7,14 @@ export type TodoDocument = HydratedDocument<Todo>;
 
 @Schema()
 export class Todo {
-  @Prop()
+  @Prop({ required: true })
   title: string;
 
   @Prop()
   isDone: boolean;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'user' })
-  user: User;
+  userId: User;
 }
 
-export const CatSchema = SchemaFactory.createForClass(Todo);
+export const TodoSchema = SchemaFactory.createForClass(Todo);

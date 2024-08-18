@@ -17,7 +17,7 @@ export class User {
   password: string;
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'friend' }] })
-  friend: User[];
+  friends: User[];
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'todo' }] })
   todos: Todo[];

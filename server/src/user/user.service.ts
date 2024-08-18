@@ -25,12 +25,29 @@ export class UserService {
     return user;
   }
 
+  async getFriendsById(id: ObjectId): Promise<User[] | null> {
+    const user = await this.userModel.findById(id);
+    if (user) return user.friends;
+    return null;
+  }
+
   async update(id: ObjectId, updateUserDTO: UserDTO): Promise<User | null> {
     const user = await this.userModel.findByIdAndUpdate(id, {
       ...updateUserDTO,
     });
 
     return user;
+  }
+
+  async addFriend(id: ObjectId, friendId: ObjectId): Promise<User | null> {
+    const user = await this.userModel.findById(id);
+    console.log(friendId);
+    const friend = await this.userModel.findById(friendId);
+    if (user && friend) {
+      user.friends.push(friend);
+      return friend;
+    }
+    return null;
   }
 
   async delete(id: ObjectId): Promise<User | null> {

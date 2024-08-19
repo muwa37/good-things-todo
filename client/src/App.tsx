@@ -1,5 +1,7 @@
+import AppRouter from './components/logic/AppRouter';
+
 function App() {
-  return <div className='text-pink-800'>works</div>;
+  return <AppRouter />;
 }
 
 export default App;

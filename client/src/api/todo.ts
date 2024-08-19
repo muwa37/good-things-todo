@@ -21,20 +21,23 @@ export const getTodosById = async (userId: string) => {
   return data;
 };
 
-export const registration = async ({
-  name,
-  tag,
-  password,
-}: {
-  name: string;
-  tag: string;
-  password: string;
-}) => {
-  const { data } = await axios.post(`${import.meta.env.API_URL}login/`, {
-    name,
-    tag,
-    password,
-  });
+export const updateTodo = async (
+  todoId: string,
+  title: string,
+  isDone: boolean
+) => {
+  const { data } = await axios.patch(
+    `${import.meta.env.API_URL}todo/${todoId}`,
+    { title, isDone }
+  );
+
+  return data;
+};
+
+export const deleteTodo = async (todoId: string) => {
+  const { data } = await axios.delete(
+    `${import.meta.env.API_URL}todo/${todoId}`
+  );
 
   return data;
 };

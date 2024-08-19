@@ -16,6 +16,18 @@ export class UserDTO {
   readonly password: string;
 }
 
+export class UpdateUserDTO {
+  @IsString({ message: 'should be string' })
+  readonly name?: string;
+
+  @IsString({ message: 'should be string' })
+  readonly tag?: string;
+
+  @IsString({ message: 'should be string' })
+  @Length(6, 20, { message: 'no less then 6 and no more then 20 symbols' })
+  readonly password?: string;
+}
+
 export class FriendDTO {
   readonly friendId: ObjectId;
 }

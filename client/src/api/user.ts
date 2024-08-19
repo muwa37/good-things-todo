@@ -1,34 +1,48 @@
 import axios from 'axios';
 
-export const login = async ({
-  tag,
-  password,
-}: {
-  tag: string;
-  password: string;
-}) => {
-  const { data } = await axios.post(`${import.meta.env.API_URL}login/`, {
-    tag,
-    password,
-  });
+export const searchUserByTag = async (tag: string) => {
+  const { data } = await axios.get(
+    `${import.meta.env.API_URL}users/searchByTag/search?query=${tag}`
+  );
 
   return data;
 };
 
-export const registration = async ({
-  name,
-  tag,
-  password,
-}: {
-  name: string;
-  tag: string;
-  password: string;
-}) => {
-  const { data } = await axios.post(`${import.meta.env.API_URL}login/`, {
-    name,
-    tag,
-    password,
-  });
+export const getFriendsById = async (userId: string) => {
+  const { data } = await axios.get(
+    `${import.meta.env.API_URL}users/getFriends/${userId}`
+  );
+
+  return data;
+};
+
+export const addFriend = async (userId: string, friendId: string) => {
+  const { data } = await axios.patch(
+    `${import.meta.env.API_URL}users/addFriend/${userId}`,
+    { friendId }
+  );
+
+  return data;
+};
+
+export const updateUser = async (
+  userId: string,
+  name?: string,
+  tag?: string,
+  password?: string
+) => {
+  const { data } = await axios.patch(
+    `${import.meta.env.API_URL}users/getFriends/${userId}`,
+    { name, tag, password }
+  );
+
+  return data;
+};
+
+export const deleteUser = async (userId: string) => {
+  const { data } = await axios.delete(
+    `${import.meta.env.API_URL}users/${userId}`
+  );
 
   return data;
 };

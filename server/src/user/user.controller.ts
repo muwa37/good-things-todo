@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { FriendDTO, UserDTO } from './user.dto';
+import { FriendDTO, UpdateUserDTO, UserDTO } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('/users')
@@ -43,7 +43,10 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  async update(@Param('id') id: ObjectId, @Body() updateUserDTO: UserDTO) {
+  async update(
+    @Param('id') id: ObjectId,
+    @Body() updateUserDTO: UpdateUserDTO,
+  ) {
     return await this.userService.update(id, updateUserDTO);
   }
 

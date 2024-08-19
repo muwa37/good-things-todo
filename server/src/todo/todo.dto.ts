@@ -7,7 +7,4 @@ export class TodoDTO {
 
   @IsBoolean({ message: 'should be boolean' })
   readonly isDone: boolean;
-
-  @IsString({ message: 'should be string' })
-  readonly userId: string;
 }

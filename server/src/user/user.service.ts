@@ -20,12 +20,11 @@ export class UserService {
     return users;
   }
 
-  async getOneByTag(tag: string): Promise<User> {
+  async getOneByTag(tag: string): Promise<User | null> {
     const user = await this.userModel.findOne({
       tag: tag,
     });
-    if (user) return user;
-    throw new HttpException('user not found', HttpStatus.BAD_REQUEST);
+    return user;
   }
 
   async getOneById(id: ObjectId): Promise<User> {

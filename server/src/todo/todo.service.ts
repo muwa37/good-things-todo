@@ -16,7 +16,6 @@ export class TodoService {
     const user = await this.userModel.findById(userId);
     const todo = await this.todoModel.create({
       ...createTodoDTO,
-      isDone: false,
       userId,
     });
     if (user) {

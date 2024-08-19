@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { UserDTO } from 'src/user/user.dto';
 import { User } from 'src/user/user.schema';
 import { UserService } from 'src/user/user.service';
+import { LoginDTO, RegistrationDTO } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,17 +17,17 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(userDTO: UserDTO): Promise<{
+  async login(loginDTO: LoginDTO): Promise<{
     token: string;
   }> {
-    const user = await this.validateUser(userDTO);
+    const user = await this.validateUser(loginDTO);
     return this.generateToken(user);
   }
 
-  async registration(userDTO: UserDTO): Promise<{
+  async registration(registrationDTO: RegistrationDTO): Promise<{
     token: string;
   }> {
-    const candidate = await this.userService.getOneByTag(userDTO.tag);
+    const candidate = await this.userService.getOneByTag(registrationDTO.tag);
     if (candidate) {
       throw new HttpException(
         'user with this tag already exist',
@@ -35,11 +35,12 @@ export class AuthService {
       );
     }
 
-    const hashPassword = await bcrypt.hash(userDTO.password, 5);
+    const hashPassword = await bcrypt.hash(registrationDTO.password, 5);
     const user = await this.userService.create({
-      ...userDTO,
+      ...registrationDTO,
       password: hashPassword,
     });
+
     return this.generateToken(user);
   }
 
@@ -50,11 +51,11 @@ export class AuthService {
     return { token: this.jwtService.sign(payload) };
   }
 
-  async validateUser(userDto: UserDTO): Promise<User> {
-    const user = await this.userService.getOneByTag(userDto.tag);
+  async validateUser(loginDTO: LoginDTO): Promise<User> {
+    const user = await this.userService.getOneByTag(loginDTO.tag);
     if (user) {
       const isPasswordCorrect = await bcrypt.compare(
-        userDto.password,
+        loginDTO.password,
         user?.password,
       );
       if (isPasswordCorrect) return user;

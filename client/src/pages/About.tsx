@@ -5,7 +5,7 @@ import { backendTechNames, frontendTechNames } from '../utils/constants';
 const About = () => {
   return (
     <section className='flex flex-col w-full h-full items-center justify-evenly'>
-      <PageTitle pageTitle='About Typ3Tr4in' />
+      <PageTitle pageTitle='About Good Things ToDo' />
       <div className='h-full w-full flex flex-col items-center justify-evenly'>
         <h3 className='text-2xl font-bold'>
           In this application you can have a list of good things to do and

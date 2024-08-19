@@ -16,7 +16,7 @@ const AppRouter = () => {
         <Routes>
           <Route path='/' element={<Main />}>
             <Route path='*' element={<NotFound />} />
-            <Route path='/about' element={<About />} />
+            <Route path='/' element={<About />} />
             <Route path='/auth' element={<Auth />} />
             {isAuth && <Route path='/friends' element={<Friends />} />}
             {isAuth && <Route path='/todo' element={<Todo />} />}

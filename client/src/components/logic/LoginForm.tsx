@@ -4,8 +4,9 @@ import {
   useForm,
   useFormState,
 } from 'react-hook-form';
-import { loginValidation, passwordValidation } from '../../utils/validators';
+import { passwordValidation, tagValidation } from '../../utils/validators';
 import MyButton from '../ui/MyButton';
+import MyInput from '../ui/MyInput';
 
 type Props = { authSwitchHandler: () => void };
 
@@ -26,20 +27,20 @@ const LoginForm = ({ authSwitchHandler }: Props) => {
       <div className='h-1/2 w-full flex flex-col items-center justify-evenly'>
         <h2 className='text-4xl font-bold'>Log In!</h2>
         <form
-          className='h-full w-full flex flex-col items-center justify-center'
+          className='my-4 h-full w-full flex flex-col items-center justify-center'
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className='h-1/4 w-full flex flex-col items-center justify-evenly'>
+          <div className='h-1/4 w-full flex flex-col items-center justify-evenly mb-2'>
             <Controller
               control={control}
               name='tag'
-              rules={loginValidation}
+              rules={tagValidation}
               render={({ field }) => (
-                <input
-                  className='h-10 w-60 border-2 rounded-md focus:outline-none focus:border-0 focus:ring focus:ring-violet-300 focus:text-violet-300 flex items-center justify-center bg-inherit border-red-300 text-red-300 hover:border-blue-300 hover:text-blue-300'
+                <MyInput
                   placeholder='tag'
                   onChange={(e) => field.onChange(e)}
                   value={field.value}
+                  type='text'
                 />
               )}
             />
@@ -55,8 +56,7 @@ const LoginForm = ({ authSwitchHandler }: Props) => {
               name='password'
               rules={passwordValidation}
               render={({ field }) => (
-                <input
-                  className='h-10 w-60 flex items-center border-2 border-red-300 text-red-300 rounded-md focus:outline-none focus:border-0 focus:ring focus:ring-violet-300 focus:text-violet-300  justify-center bg-inherit  hover:border-blue-300 hover:text-blue-300'
+                <MyInput
                   placeholder='password'
                   onChange={(e) => field.onChange(e)}
                   value={field.value}

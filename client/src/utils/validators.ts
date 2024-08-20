@@ -1,10 +1,21 @@
 const REQUIRED_FIELD = 'field is required';
 
-export const loginValidation = {
+export const nameValidation = {
   required: REQUIRED_FIELD,
   validate: (value: string) => {
     if (value.match(/[а-яА-Я]/)) {
-      return 'login must not contain russian letters';
+      return 'name must not contain russian letters';
+    }
+
+    return true;
+  },
+};
+
+export const tagValidation = {
+  required: REQUIRED_FIELD,
+  validate: (value: string) => {
+    if (value.match(/[а-яА-Я]/)) {
+      return 'tag must not contain russian letters';
     }
 
     return true;

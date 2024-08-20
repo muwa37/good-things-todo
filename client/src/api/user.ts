@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const searchUserByTag = async (tag: string) => {
   const { data } = await axios.get(
-    `${import.meta.env.API_URL}users/searchByTag/search?query=${tag}`
+    `${import.meta.env.VITE_API_URL}users/searchByTag/search?query=${tag}`
   );
 
   return data;
@@ -10,7 +10,7 @@ export const searchUserByTag = async (tag: string) => {
 
 export const getFriendsById = async (userId: string) => {
   const { data } = await axios.get(
-    `${import.meta.env.API_URL}users/getFriends/${userId}`
+    `${import.meta.env.VITE_API_URL}users/getFriends/${userId}`
   );
 
   return data;
@@ -18,7 +18,7 @@ export const getFriendsById = async (userId: string) => {
 
 export const addFriend = async (userId: string, friendId: string) => {
   const { data } = await axios.patch(
-    `${import.meta.env.API_URL}users/addFriend/${userId}`,
+    `${import.meta.env.VITE_API_URL}users/addFriend/${userId}`,
     { friendId }
   );
 
@@ -32,7 +32,7 @@ export const updateUser = async (
   password?: string
 ) => {
   const { data } = await axios.patch(
-    `${import.meta.env.API_URL}users/getFriends/${userId}`,
+    `${import.meta.env.VITE_API_URL}users/getFriends/${userId}`,
     { name, tag, password }
   );
 
@@ -41,7 +41,7 @@ export const updateUser = async (
 
 export const deleteUser = async (userId: string) => {
   const { data } = await axios.delete(
-    `${import.meta.env.API_URL}users/${userId}`
+    `${import.meta.env.VITE_API_URL}users/${userId}`
   );
 
   return data;

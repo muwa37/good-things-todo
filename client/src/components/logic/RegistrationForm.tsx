@@ -4,6 +4,7 @@ import {
   useForm,
   useFormState,
 } from 'react-hook-form';
+import { registration } from '../../api/auth';
 import {
   nameValidation,
   passwordValidation,
@@ -26,7 +27,7 @@ const RegistrationForm = ({ authSwitchHandler }: Props) => {
     control,
   });
   const onSubmit: SubmitHandler<RegistrationFields> = (data) =>
-    console.log(data);
+    registration(data);
 
   return (
     <div className='h-full w-full flex flex-col items-center justify-evenly'>

@@ -4,6 +4,7 @@ import {
   useForm,
   useFormState,
 } from 'react-hook-form';
+import { login } from '../../api/auth';
 import { passwordValidation, tagValidation } from '../../utils/validators';
 import MyButton from '../ui/MyButton';
 import MyInput from '../ui/MyInput';
@@ -20,7 +21,7 @@ const LoginForm = ({ authSwitchHandler }: Props) => {
   const { errors } = useFormState({
     control,
   });
-  const onSubmit: SubmitHandler<LoginFields> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<LoginFields> = (data) => login(data);
 
   return (
     <div className='h-full w-full flex flex-col items-center justify-evenly'>

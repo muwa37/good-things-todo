@@ -24,11 +24,14 @@ export const registration = async ({
   tag: string;
   password: string;
 }) => {
-  const { data } = await axios.post(`${import.meta.env.VITE_API_URL}login/`, {
-    name,
-    tag,
-    password,
-  });
+  const { data } = await axios.post(
+    `${import.meta.env.VITE_API_URL}auth/registration/`,
+    {
+      name,
+      tag,
+      password,
+    }
+  );
 
   return data;
 };

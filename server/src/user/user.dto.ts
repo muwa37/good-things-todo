@@ -1,5 +1,4 @@
 import { IsNotEmpty, IsString, Length } from 'class-validator';
-import { ObjectId } from 'mongoose';
 
 export class UserDTO {
   @IsString({ message: 'should be string' })
@@ -29,5 +28,5 @@ export class UpdateUserDTO {
 }
 
 export class FriendDTO {
-  readonly friendId: ObjectId;
+  readonly friendId: string;
 }

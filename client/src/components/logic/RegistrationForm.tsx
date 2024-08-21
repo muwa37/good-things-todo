@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import {
   Controller,
   SubmitHandler,
   useForm,
   useFormState,
 } from 'react-hook-form';
+import { Navigate } from 'react-router-dom';
 import { registration } from '../../api/auth';
 import {
   nameValidation,
@@ -12,6 +14,7 @@ import {
 } from '../../utils/validators';
 import MyButton from '../ui/MyButton';
 import MyInput from '../ui/MyInput';
+import ErrorModal from './ErrorModal';
 
 type Props = { authSwitchHandler: () => void };
 
@@ -22,15 +25,43 @@ interface RegistrationFields {
 }
 
 const RegistrationForm = ({ authSwitchHandler }: Props) => {
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [isRegisterFailed, setIsRegisterFailed] = useState(false);
+  const [registrationErrorMessage, setRegistrationErrorMessage] =
+    useState<any>('');
+
+  const onModalCloseHandler = () => setIsRegisterFailed(false);
+
   const { handleSubmit, control } = useForm<RegistrationFields>();
   const { errors } = useFormState({
     control,
   });
-  const onSubmit: SubmitHandler<RegistrationFields> = (data) =>
-    registration(data);
+  const onSubmit: SubmitHandler<RegistrationFields> = async (data) => {
+    try {
+      const res = await registration(data);
+      setIsRegistered(true);
+      console.log(res);
+    } catch (error) {
+      setRegistrationErrorMessage(error);
+    }
+  };
+
+  if (isRegistered) return <Navigate to='/todo' />;
 
   return (
     <div className='h-full w-full flex flex-col items-center justify-evenly'>
+      <div
+        className={
+          isRegisterFailed
+            ? 'bg-black bg-opacity-50 fixed h-screen w-screen top-0 left-0'
+            : 'hidden'
+        }
+      ></div>
+      <ErrorModal
+        isActive={isRegisterFailed}
+        onModalCloseHandler={onModalCloseHandler}
+        message={registrationErrorMessage}
+      />
       <div className='h-2/3 w-full flex flex-col items-center justify-evenly'>
         <h2 className='text-4xl font-bold'>Register!</h2>
         <form
@@ -100,7 +131,7 @@ const RegistrationForm = ({ authSwitchHandler }: Props) => {
             </div>
           </div>
 
-          <MyButton buttonText='Sign In' type='submit' />
+          <MyButton buttonText='Sign Up' type='submit' />
         </form>
       </div>
 

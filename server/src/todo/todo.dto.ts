@@ -6,5 +6,5 @@ export class TodoDTO {
   readonly title: string;
 
   @IsBoolean({ message: 'should be boolean' })
-  readonly isDone: boolean;
+  readonly isDone?: boolean;
 }

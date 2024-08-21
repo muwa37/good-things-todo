@@ -12,7 +12,7 @@ export class AuthController {
   }
 
   @Post('/registration')
-  async registration(@Body() registraionDTO: RegistrationDTO) {
-    return await this.authService.registration(registraionDTO);
+  async registration(@Body() registrationDTO: RegistrationDTO) {
+    return await this.authService.registration(registrationDTO);
   }
 }

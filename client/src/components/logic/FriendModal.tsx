@@ -1,6 +1,6 @@
 import { User } from '../../types/common';
 import MyButton from '../ui/MyButton';
-import MyLi from '../ui/MyLi';
+import TodoItem from './TodoItem';
 
 type Props = {
   isActive: boolean;
@@ -35,7 +35,7 @@ const FriendModal = ({
         </div>
         <ul className='h-2/3 w-full flex flex-col items-start justify-start'>
           {chosenFriend?.todoList.map((todo) => (
-            <MyLi liTitle={todo.title} />
+            <TodoItem key={todo.id} todo={todo} />
           ))}
         </ul>
       </div>

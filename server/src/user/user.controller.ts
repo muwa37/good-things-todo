@@ -5,23 +5,17 @@ import {
   Get,
   Param,
   Patch,
-  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { FriendDTO, UpdateUserDTO, UserDTO } from './user.dto';
+import { FriendDTO, UpdateUserDTO } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('/users')
 export class UserController {
   constructor(private userService: UserService) {}
-
-  @Post()
-  create(@Body() createUserDTO: UserDTO) {
-    return this.userService.create(createUserDTO);
-  }
 
   @UseGuards(JwtAuthGuard)
   @Get('/getOneById/:id')

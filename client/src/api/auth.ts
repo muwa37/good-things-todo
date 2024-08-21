@@ -7,10 +7,13 @@ export const login = async ({
   tag: string;
   password: string;
 }) => {
-  const { data } = await axios.post(`${import.meta.env.VITE_API_URL}login/`, {
-    tag,
-    password,
-  });
+  const { data } = await axios.post(
+    `${import.meta.env.VITE_API_URL}auth/login/`,
+    {
+      tag,
+      password,
+    }
+  );
 
   return data;
 };

@@ -1,13 +1,17 @@
+import axios from 'axios';
+import { useState } from 'react';
 import {
   Controller,
   SubmitHandler,
   useForm,
   useFormState,
 } from 'react-hook-form';
+import { Navigate } from 'react-router-dom';
 import { login } from '../../api/auth';
 import { passwordValidation, tagValidation } from '../../utils/validators';
 import MyButton from '../ui/MyButton';
 import MyInput from '../ui/MyInput';
+import ErrorModal from './ErrorModal';
 
 type Props = { authSwitchHandler: () => void };
 
@@ -17,14 +21,47 @@ interface LoginFields {
 }
 
 const LoginForm = ({ authSwitchHandler }: Props) => {
+  const [isLogged, setIsLogged] = useState(false);
+  const [isLoginFailed, setIsLoginFailed] = useState(false);
+  const [loginErrorMessage, setLoginErrorMessage] = useState('');
+
+  const onModalCloseHandler = () => setIsLoginFailed(false);
+
   const { handleSubmit, control } = useForm<LoginFields>();
   const { errors } = useFormState({
     control,
   });
-  const onSubmit: SubmitHandler<LoginFields> = (data) => login(data);
+
+  const onSubmit: SubmitHandler<LoginFields> = async (data) => {
+    try {
+      const res = await login(data);
+      setIsLogged(true);
+      console.log(res);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setIsLoginFailed(true);
+        setLoginErrorMessage(error.response?.data?.message);
+      }
+      console.log(error);
+    }
+  };
+
+  if (isLogged) return <Navigate to='/todo' />;
 
   return (
     <div className='h-full w-full flex flex-col items-center justify-evenly'>
+      <div
+        className={
+          isLoginFailed
+            ? 'bg-black bg-opacity-50 fixed h-screen w-screen top-0 left-0'
+            : 'hidden'
+        }
+      ></div>
+      <ErrorModal
+        isActive={isLoginFailed}
+        onModalCloseHandler={onModalCloseHandler}
+        message={loginErrorMessage}
+      />
       <div className='h-1/2 w-full flex flex-col items-center justify-evenly'>
         <h2 className='text-4xl font-bold'>Log In!</h2>
         <form

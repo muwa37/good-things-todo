@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 
 export class UserDTO {
   @IsString({ message: 'should be string' })
@@ -17,13 +17,16 @@ export class UserDTO {
 
 export class UpdateUserDTO {
   @IsString({ message: 'should be string' })
+  @IsOptional()
   readonly name?: string;
 
   @IsString({ message: 'should be string' })
+  @IsOptional()
   readonly tag?: string;
 
   @IsString({ message: 'should be string' })
   @Length(6, 20, { message: 'no less then 6 and no more then 20 symbols' })
+  @IsOptional()
   readonly password?: string;
 }
 

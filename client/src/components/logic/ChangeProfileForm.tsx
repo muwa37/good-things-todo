@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
 import {
   Controller,
@@ -7,11 +6,9 @@ import {
   useForm,
   useFormState,
 } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { registration } from '../../api/auth';
-import { setIsAuth, setToken, setUser } from '../../store/user/slice';
-import { User } from '../../types/common';
+import { useSelector } from 'react-redux';
+import { updateUser } from '../../api/user';
+import { selectUser } from '../../store/user/selectors';
 import {
   nameValidation,
   passwordValidation,
@@ -21,39 +18,31 @@ import MyButton from '../ui/MyButton';
 import MyInput from '../ui/MyInput';
 import ErrorModal from './ErrorModal';
 
-type Props = { authSwitchHandler: () => void };
-
-interface RegistrationFields {
-  name: string;
-  tag: string;
-  password: string;
+interface ProfileChangeFields {
+  name?: string;
+  tag?: string;
+  password?: string;
 }
 
-const RegistrationForm = ({ authSwitchHandler }: Props) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+const ChangeProfileForm = () => {
+  const userId = useSelector(selectUser)?.id;
 
   const [isRegisterFailed, setIsRegisterFailed] = useState(false);
   const [registrationErrorMessage, setRegistrationErrorMessage] = useState('');
 
   const onModalCloseHandler = () => setIsRegisterFailed(false);
 
-  const { handleSubmit, control } = useForm<RegistrationFields>();
+  const { handleSubmit, control } = useForm<ProfileChangeFields>();
   const { errors } = useFormState({
     control,
   });
 
-  const onSubmit: SubmitHandler<RegistrationFields> = async (data) => {
+  const onSubmit: SubmitHandler<ProfileChangeFields> = async (data) => {
     try {
-      const res = await registration(data);
-      const decoded = jwtDecode(res.token);
-      const user = decoded as User;
-
-      dispatch(setUser({ name: user.name, tag: user.tag, id: user.id }));
-      dispatch(setToken(res.token));
-      dispatch(setIsAuth(true));
-
-      navigate('/todo');
+      if (userId) {
+        const res = await updateUser({ userId, ...data });
+        console.log(res);
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setIsRegisterFailed(true);
@@ -78,7 +67,7 @@ const RegistrationForm = ({ authSwitchHandler }: Props) => {
         message={registrationErrorMessage}
       />
       <div className='h-2/3 w-full flex flex-col items-center justify-evenly'>
-        <h2 className='text-4xl font-bold'>Register!</h2>
+        <h2 className='text-4xl font-bold'>Change your data</h2>
         <form
           className='my-4 h-full w-full flex flex-col items-center justify-center'
           onSubmit={handleSubmit(onSubmit)}
@@ -146,16 +135,11 @@ const RegistrationForm = ({ authSwitchHandler }: Props) => {
             </div>
           </div>
 
-          <MyButton buttonText='Sign Up' type='submit' />
+          <MyButton buttonText='Send changes' type='submit' />
         </form>
       </div>
-
-      <MyButton
-        buttonText='already have an account? log in!'
-        onClickFn={authSwitchHandler}
-      />
     </div>
   );
 };
 
-export default RegistrationForm;
+export default ChangeProfileForm;

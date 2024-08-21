@@ -42,12 +42,26 @@ export class UserService {
     return user.friends;
   }
 
-  async update(id: ObjectId, updateUserDTO: UpdateUserDTO): Promise<User> {
-    const user = await this.userModel.findByIdAndUpdate(id, {
-      ...updateUserDTO,
-    });
-    if (user) return user;
-    throw new HttpException('user not found', HttpStatus.INTERNAL_SERVER_ERROR);
+  async update(
+    id: ObjectId,
+    updateUserDTO: UpdateUserDTO,
+  ): Promise<Record<string, any> | null> {
+    const oldUser = await this.userModel.findById(id).lean().exec();
+    if (!oldUser) return null;
+
+    await this.userModel.findByIdAndUpdate(id, updateUserDTO, { new: true });
+
+    const newUser = await this.userModel.findById(id).lean().exec();
+    if (!newUser) return null;
+
+    const updatedFields: Record<string, any> = {};
+    for (const key of Object.keys(updateUserDTO) as (keyof User)[]) {
+      if (oldUser[key] !== newUser[key]) {
+        updatedFields[key] = newUser[key];
+      }
+    }
+
+    return updatedFields;
   }
 
   async addFriend(

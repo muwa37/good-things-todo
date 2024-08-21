@@ -58,6 +58,7 @@ const Header = () => {
               friends
             </NavLink>
           )}
+
           {isAuth && (
             <NavLink
               to='/todo'
@@ -66,6 +67,17 @@ const Header = () => {
               }
             >
               todo
+            </NavLink>
+          )}
+
+          {isAuth && (
+            <NavLink
+              to='/profile'
+              className={({ isActive }) =>
+                isActive ? 'text-green-700' : 'hover:text-blue-300'
+              }
+            >
+              profile
             </NavLink>
           )}
         </nav>

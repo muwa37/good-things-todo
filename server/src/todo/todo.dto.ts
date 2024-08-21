@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class TodoDTO {
   @IsString({ message: 'should be string' })
@@ -6,5 +6,6 @@ export class TodoDTO {
   readonly title: string;
 
   @IsBoolean({ message: 'should be boolean' })
+  @IsOptional()
   readonly isDone?: boolean;
 }

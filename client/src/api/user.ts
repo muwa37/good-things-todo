@@ -25,14 +25,19 @@ export const addFriend = async (userId: string, friendId: string) => {
   return data;
 };
 
-export const updateUser = async (
-  userId: string,
-  name?: string,
-  tag?: string,
-  password?: string
-) => {
+export const updateUser = async ({
+  userId,
+  name,
+  tag,
+  password,
+}: {
+  userId: string;
+  name?: string;
+  tag?: string;
+  password?: string;
+}) => {
   const { data } = await axios.patch(
-    `${import.meta.env.VITE_API_URL}users/getFriends/${userId}`,
+    `${import.meta.env.VITE_API_URL}users/${userId}`,
     { name, tag, password }
   );
 

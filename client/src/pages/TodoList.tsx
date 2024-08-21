@@ -7,10 +7,11 @@ const TodoList = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   useEffect(() => {
     setTodos([
-      { title: 'test', isDone: false },
-      { title: 'example', isDone: true },
+      { title: 'test', isDone: false, id: 'asddas2d' },
+      { title: 'example', isDone: true, id: 'asdcxzc' },
     ]);
-  }, [todos]);
+  }, []);
+
   return (
     <section className='flex flex-col w-full h-full items-center justify-evenly'>
       <PageTitle pageTitle='Your Good Things ToDo' />
@@ -20,7 +21,7 @@ const TodoList = () => {
         </h3>
         <ul className=' w-2/3 h-3/4 flex flex-col items-center justify-start overflow-hidden'>
           {todos.map((todo) => (
-            <TodoItem todo={todo} />
+            <TodoItem key={todo.id} todo={todo} />
           ))}
         </ul>
       </div>

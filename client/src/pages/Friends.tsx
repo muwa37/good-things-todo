@@ -12,7 +12,7 @@ const Friends = () => {
     {
       name: 'sample',
       tag: 'sample',
-      todoList: [{ title: 'test', isDone: false }],
+      todoList: [{ title: 'test', isDone: false, id: 'asdcxz' }],
       id: 'asds',
     },
     { name: 'example2', tag: 'example2', todoList: [], id: 'dsazx' },
@@ -25,12 +25,12 @@ const Friends = () => {
       {
         name: 'test',
         tag: 'test',
-        todoList: [{ title: 'sample', isDone: false }],
+        todoList: [{ title: 'sample', isDone: false, id: 'asdasd' }],
         id: 'asd',
       },
       { name: 'test2', tag: 'test2', todoList: [], id: 'dsa' },
     ]);
-  }, [friends]);
+  }, []);
 
   const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
@@ -85,6 +85,7 @@ const Friends = () => {
           <div className='h-1/2 overflow-auto'>
             {foundedUsers.map((user) => (
               <div
+                key={user.tag}
                 onClick={() => onFriendClickHandler(user)}
                 className='flex items-center justify-start p-2 m-2'
               >
@@ -98,6 +99,7 @@ const Friends = () => {
             <div className='h-full w-full overflow-auto'>
               {friends.map((friend) => (
                 <div
+                  key={friend.tag}
                   onClick={() => onFriendClickHandler(friend)}
                   className='flex items-center justify-start p-2 m-2'
                 >

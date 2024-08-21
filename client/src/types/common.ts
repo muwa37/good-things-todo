@@ -8,4 +8,5 @@ export type User = {
 export type Todo = {
   title: string;
   isDone: boolean;
+  id: string;
 };

@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import FriendModal from '../components/logic/FriendModal';
 import MyButton from '../components/ui/MyButton';
 import MyInput from '../components/ui/MyInput';
@@ -7,24 +7,37 @@ import { User } from '../types/common';
 
 const Friends = () => {
   const [searchValue, setSearchValue] = useState<string>('');
-  const [friends, setFriends] = useState<User[]>([
+  const [friends, setFriends] = useState<User[]>([]);
+  const [foundedUsers, setFoundedUsers] = useState<User[]>([
     {
-      name: 'test',
-      tag: 'test',
-      todoList: [{ title: 'sample', isDone: false }],
-      id: 'asd',
+      name: 'sample',
+      tag: 'sample',
+      todoList: [{ title: 'test', isDone: false }],
+      id: 'asds',
     },
-    { name: 'test2', tag: 'test2', todoList: [], id: 'dsa' },
+    { name: 'example2', tag: 'example2', todoList: [], id: 'dsazx' },
   ]);
   const [isModalActive, setIsModalActive] = useState<boolean>(false);
   const [chosenFriend, setChosenFriend] = useState<User | null>(null);
+
+  useEffect(() => {
+    setFriends([
+      {
+        name: 'test',
+        tag: 'test',
+        todoList: [{ title: 'sample', isDone: false }],
+        id: 'asd',
+      },
+      { name: 'test2', tag: 'test2', todoList: [], id: 'dsa' },
+    ]);
+  }, [friends]);
 
   const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
   const onSearchHandler = () => {
     console.log(searchValue);
-    setFriends([]);
+    setFoundedUsers([]);
   };
   const onFriendClickHandler = (friend: User) => {
     setIsModalActive(true);
@@ -68,20 +81,31 @@ const Friends = () => {
             <MyButton buttonText='find' onClickFn={onSearchHandler} />
           </div>
         </div>
-        <div className='h-full w-2/3 flex flex-col overflow-auto'>
-          <div className='h-1/2'>
-            {friends.map((friend) => (
+        <div className='h-full w-2/3 flex flex-col'>
+          <div className='h-1/2 overflow-auto'>
+            {foundedUsers.map((user) => (
               <div
-                onClick={() => onFriendClickHandler(friend)}
+                onClick={() => onFriendClickHandler(user)}
                 className='flex items-center justify-start p-2 m-2'
               >
-                <p>{friend.name} -</p>
-                <p>({friend.tag})</p>
+                <p>{user.name} -</p>
+                <p>({user.tag})</p>
               </div>
             ))}
           </div>
-          <div className='h-1/2'>
+          <div className='h-1/2 flex flex-col items-center '>
             <h3 className='text-xl font-bold'>your friends list</h3>
+            <div className='h-full w-full overflow-auto'>
+              {friends.map((friend) => (
+                <div
+                  onClick={() => onFriendClickHandler(friend)}
+                  className='flex items-center justify-start p-2 m-2'
+                >
+                  <p>{friend.name} -</p>
+                  <p>({friend.tag})</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

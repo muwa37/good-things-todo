@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
 import {
   Controller,
@@ -6,8 +7,11 @@ import {
   useForm,
   useFormState,
 } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import { login } from '../../api/auth';
+import { setIsAuth, setToken, setUser } from '../../store/user/slice';
+import { User } from '../../types/common';
 import { passwordValidation, tagValidation } from '../../utils/validators';
 import MyButton from '../ui/MyButton';
 import MyInput from '../ui/MyInput';
@@ -21,6 +25,8 @@ interface LoginFields {
 }
 
 const LoginForm = ({ authSwitchHandler }: Props) => {
+  const dispatch = useDispatch();
+
   const [isLogged, setIsLogged] = useState(false);
   const [isLoginFailed, setIsLoginFailed] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
@@ -35,8 +41,14 @@ const LoginForm = ({ authSwitchHandler }: Props) => {
   const onSubmit: SubmitHandler<LoginFields> = async (data) => {
     try {
       const res = await login(data);
+      const decoded = jwtDecode(res.token);
+      const user = decoded as User;
+
+      dispatch(setUser({ name: user.name, tag: user.tag, id: user.id }));
+      dispatch(setToken(res.token));
+      dispatch(setIsAuth(true));
+
       setIsLogged(true);
-      console.log(res);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setIsLoginFailed(true);

@@ -12,10 +12,9 @@ const Friends = () => {
     {
       name: 'sample',
       tag: 'sample',
-      todoList: [{ title: 'test', isDone: false, id: 'asdcxz' }],
       id: 'asds',
     },
-    { name: 'example2', tag: 'example2', todoList: [], id: 'dsazx' },
+    { name: 'example2', tag: 'example2', id: 'dsazx' },
   ]);
   const [isModalActive, setIsModalActive] = useState<boolean>(false);
   const [chosenFriend, setChosenFriend] = useState<User | null>(null);
@@ -25,10 +24,10 @@ const Friends = () => {
       {
         name: 'test',
         tag: 'test',
-        todoList: [{ title: 'sample', isDone: false, id: 'asdasd' }],
+
         id: 'asd',
       },
-      { name: 'test2', tag: 'test2', todoList: [], id: 'dsa' },
+      { name: 'test2', tag: 'test2', id: 'dsa' },
     ]);
   }, []);
 

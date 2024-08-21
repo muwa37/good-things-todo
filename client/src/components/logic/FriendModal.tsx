@@ -1,4 +1,5 @@
-import { User } from '../../types/common';
+import { useEffect, useState } from 'react';
+import { Todo, User } from '../../types/common';
 import MyButton from '../ui/MyButton';
 import TodoItem from './TodoItem';
 
@@ -13,6 +14,16 @@ const FriendModal = ({
   onModalCloseHandler,
   chosenFriend,
 }: Props) => {
+  const [chosenFriendTodoList, setChosenFriendTodoList] = useState<Todo[]>([]);
+
+  useEffect(
+    () =>
+      setChosenFriendTodoList([
+        { title: 'test', isDone: false, id: 'asddas2d' },
+        { title: 'example', isDone: true, id: 'asdcxzc' },
+      ]),
+    []
+  );
   return (
     <div
       className={
@@ -34,7 +45,7 @@ const FriendModal = ({
           </h3>
         </div>
         <ul className='h-2/3 w-full flex flex-col items-start justify-start'>
-          {chosenFriend?.todoList.map((todo) => (
+          {chosenFriendTodoList.map((todo) => (
             <TodoItem key={todo.id} todo={todo} />
           ))}
         </ul>

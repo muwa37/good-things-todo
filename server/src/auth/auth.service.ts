@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { User } from 'src/user/user.schema';
+import { UserDocument } from 'src/user/user.schema';
 import { UserService } from 'src/user/user.service';
 import { LoginDTO, RegistrationDTO } from './auth.dto';
 
@@ -44,14 +44,14 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async generateToken(user: User): Promise<{
+  async generateToken(user: UserDocument): Promise<{
     token: string;
   }> {
-    const payload = { name: user.name, tag: user.tag, id: user };
+    const payload = { name: user.name, tag: user.tag, id: user._id };
     return { token: this.jwtService.sign(payload) };
   }
 
-  async validateUser(loginDTO: LoginDTO): Promise<User> {
+  async validateUser(loginDTO: LoginDTO): Promise<UserDocument> {
     const user = await this.userService.getOneByTag(loginDTO.tag);
     if (user) {
       const isPasswordCorrect = await bcrypt.compare(

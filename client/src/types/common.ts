@@ -1,7 +1,6 @@
 export type User = {
   name: string;
   tag: string;
-  todoList: Todo[];
   id: string;
 };
 

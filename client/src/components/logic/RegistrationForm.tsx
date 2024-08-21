@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState } from 'react';
 import {
   Controller,
@@ -27,8 +28,7 @@ interface RegistrationFields {
 const RegistrationForm = ({ authSwitchHandler }: Props) => {
   const [isRegistered, setIsRegistered] = useState(false);
   const [isRegisterFailed, setIsRegisterFailed] = useState(false);
-  const [registrationErrorMessage, setRegistrationErrorMessage] =
-    useState<any>('');
+  const [registrationErrorMessage, setRegistrationErrorMessage] = useState('');
 
   const onModalCloseHandler = () => setIsRegisterFailed(false);
 
@@ -42,7 +42,11 @@ const RegistrationForm = ({ authSwitchHandler }: Props) => {
       setIsRegistered(true);
       console.log(res);
     } catch (error) {
-      setRegistrationErrorMessage(error);
+      if (axios.isAxiosError(error)) {
+        setIsRegisterFailed(true);
+        setRegistrationErrorMessage(error.response?.data?.message);
+      }
+      console.log(error);
     }
   };
 

@@ -4,7 +4,7 @@ import { User } from '../../types/common';
 const initialState: { token: string; user: null | User; isAuth: boolean } = {
   token: '',
   user: null,
-  isAuth: true,
+  isAuth: false,
 };
 
 const userSlice = createSlice({

@@ -8,7 +8,7 @@ import {
   useFormState,
 } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { registration } from '../../api/auth';
 import { setIsAuth, setToken, setUser } from '../../store/user/slice';
 import { User } from '../../types/common';
@@ -31,8 +31,8 @@ interface RegistrationFields {
 
 const RegistrationForm = ({ authSwitchHandler }: Props) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const [isRegistered, setIsRegistered] = useState(false);
   const [isRegisterFailed, setIsRegisterFailed] = useState(false);
   const [registrationErrorMessage, setRegistrationErrorMessage] = useState('');
 
@@ -52,7 +52,7 @@ const RegistrationForm = ({ authSwitchHandler }: Props) => {
       dispatch(setToken(res.token));
       dispatch(setIsAuth(true));
 
-      setIsRegistered(true);
+      navigate('/todo');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setIsRegisterFailed(true);
@@ -61,8 +61,6 @@ const RegistrationForm = ({ authSwitchHandler }: Props) => {
       console.log(error);
     }
   };
-
-  if (isRegistered) return <Navigate to='/todo' />;
 
   return (
     <div className='h-full w-full flex flex-col items-center justify-evenly'>

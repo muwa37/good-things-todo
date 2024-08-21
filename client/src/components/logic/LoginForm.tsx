@@ -8,7 +8,7 @@ import {
   useFormState,
 } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../../api/auth';
 import { setIsAuth, setToken, setUser } from '../../store/user/slice';
 import { User } from '../../types/common';
@@ -26,8 +26,8 @@ interface LoginFields {
 
 const LoginForm = ({ authSwitchHandler }: Props) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const [isLogged, setIsLogged] = useState(false);
   const [isLoginFailed, setIsLoginFailed] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
 
@@ -48,7 +48,7 @@ const LoginForm = ({ authSwitchHandler }: Props) => {
       dispatch(setToken(res.token));
       dispatch(setIsAuth(true));
 
-      setIsLogged(true);
+      navigate('/todo');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setIsLoginFailed(true);
@@ -57,8 +57,6 @@ const LoginForm = ({ authSwitchHandler }: Props) => {
       console.log(error);
     }
   };
-
-  if (isLogged) return <Navigate to='/todo' />;
 
   return (
     <div className='h-full w-full flex flex-col items-center justify-evenly'>

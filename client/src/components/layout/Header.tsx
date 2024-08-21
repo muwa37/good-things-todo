@@ -1,9 +1,19 @@
-import { useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { selectIsAuth } from '../../store/user/selectors';
+import { logOut } from '../../store/user/slice';
+import MyButton from '../ui/MyButton';
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const isAuth = useSelector(selectIsAuth);
+
+  const onLogoutClickHandler = () => {
+    dispatch(logOut());
+    navigate('/');
+  };
 
   return (
     <header className='p-2 flex items-center'>
@@ -26,15 +36,18 @@ const Header = () => {
             about
           </NavLink>
 
-          <NavLink
-            to='/auth'
-            className={({ isActive }) =>
-              isActive ? 'text-green-700' : 'hover:text-blue-300'
-            }
-            end
-          >
-            authorization
-          </NavLink>
+          {!isAuth && (
+            <NavLink
+              to='/auth'
+              className={({ isActive }) =>
+                isActive ? 'text-green-700' : 'hover:text-blue-300'
+              }
+              end
+            >
+              authorization
+            </NavLink>
+          )}
+
           {isAuth && (
             <NavLink
               to='/friends'
@@ -56,6 +69,9 @@ const Header = () => {
             </NavLink>
           )}
         </nav>
+        {isAuth && (
+          <MyButton buttonText='Log out!' onClickFn={onLogoutClickHandler} />
+        )}
       </nav>
     </header>
   );

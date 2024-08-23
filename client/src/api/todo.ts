@@ -26,14 +26,25 @@ export const getTodosById = async (userId: string, token: string) => {
   return data;
 };
 
-export const updateTodo = async (
-  todoId: string,
-  title: string,
-  isDone: boolean
-) => {
+export const updateTodo = async ({
+  todoId,
+  token,
+  title,
+  isDone,
+}: {
+  todoId: string;
+  token: string;
+  title?: string;
+  isDone?: boolean;
+}) => {
   const { data } = await axios.patch(
     `${import.meta.env.VITE_API_URL}todo/${todoId}`,
-    { title, isDone }
+    { title, isDone },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return data;

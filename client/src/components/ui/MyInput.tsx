@@ -1,8 +1,9 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, FocusEvent } from 'react';
 
 type Props = {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  placeholder: string;
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
+  placeholder?: string;
   value?: string;
   type: string;
 };

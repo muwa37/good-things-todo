@@ -13,9 +13,14 @@ export const createTodo = async (
   return data;
 };
 
-export const getTodosById = async (userId: string) => {
+export const getTodosById = async (userId: string, token: string) => {
   const { data } = await axios.get(
-    `${import.meta.env.VITE_API_URL}todo/findByUser/${userId}`
+    `${import.meta.env.VITE_API_URL}todo/findByUser/${userId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return data;

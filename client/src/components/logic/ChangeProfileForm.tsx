@@ -6,9 +6,11 @@ import {
   useForm,
   useFormState,
 } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { updateUser } from '../../api/user';
 import { selectToken, selectUser } from '../../store/user/selectors';
+import { logOut } from '../../store/user/slice';
 import { User } from '../../types/common';
 import {
   nameChangeValidation,
@@ -27,6 +29,9 @@ interface ProfileChangeFields {
 }
 
 const ChangeProfileForm = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const userId = useSelector(selectUser)?.id;
   const token = useSelector(selectToken);
 
@@ -49,7 +54,10 @@ const ChangeProfileForm = () => {
     try {
       if (userId) {
         const res = await updateUser({ userId, token, ...data });
+
         setChangedFields(res);
+        dispatch(logOut());
+        navigate('/auth');
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -112,9 +112,17 @@ export class UserService {
     return this.getFriendsById(userId);
   }
 
-  async delete(id: ObjectId): Promise<User> {
-    const user = await this.userModel.findByIdAndDelete(id);
-    if (user) return user;
+  async delete(id: ObjectId): Promise<Pick<UserDocument, '_id'>> {
+    const user = await this.userModel
+      .findByIdAndDelete(id)
+      .select('_id')
+      .lean()
+      .exec();
+
+    if (user) {
+      return user._id;
+    }
+
     throw new HttpException('user not found', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

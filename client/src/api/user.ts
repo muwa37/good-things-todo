@@ -30,15 +30,22 @@ export const updateUser = async ({
   name,
   tag,
   password,
+  token,
 }: {
   userId: string;
   name?: string;
   tag?: string;
   password?: string;
+  token: string;
 }) => {
   const { data } = await axios.patch(
     `${import.meta.env.VITE_API_URL}users/${userId}`,
-    { name, tag, password }
+    { name, tag, password },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return data;

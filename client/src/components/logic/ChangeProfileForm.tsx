@@ -8,14 +8,16 @@ import {
 } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { updateUser } from '../../api/user';
-import { selectUser } from '../../store/user/selectors';
+import { selectToken, selectUser } from '../../store/user/selectors';
+import { User } from '../../types/common';
 import {
-  nameValidation,
-  passwordValidation,
-  tagValidation,
+  nameChangeValidation,
+  passwordChangeValidation,
+  tagChangeValidation,
 } from '../../utils/validators';
 import MyButton from '../ui/MyButton';
 import MyInput from '../ui/MyInput';
+import ChangeUserModal from './ChangeUserModal';
 import ErrorModal from './ErrorModal';
 
 interface ProfileChangeFields {
@@ -26,11 +28,17 @@ interface ProfileChangeFields {
 
 const ChangeProfileForm = () => {
   const userId = useSelector(selectUser)?.id;
+  const token = useSelector(selectToken);
 
-  const [isRegisterFailed, setIsRegisterFailed] = useState(false);
-  const [registrationErrorMessage, setRegistrationErrorMessage] = useState('');
+  const [isChangeFailed, setIsChangeFailed] = useState(false);
+  const [isChangeComplete, setIsChangeComplete] = useState(false);
+  const [changeErrorMessage, setChangeErrorMessage] = useState('');
+  const [changedFields, setChangedFields] = useState<
+    (Omit<User, never> & { password: string }) | null
+  >(null);
 
-  const onModalCloseHandler = () => setIsRegisterFailed(false);
+  const onErrorModalCloseHandler = () => setIsChangeFailed(false);
+  const onChangeModalCloseHandler = () => setIsChangeComplete(false);
 
   const { handleSubmit, control } = useForm<ProfileChangeFields>();
   const { errors } = useFormState({
@@ -40,13 +48,13 @@ const ChangeProfileForm = () => {
   const onSubmit: SubmitHandler<ProfileChangeFields> = async (data) => {
     try {
       if (userId) {
-        const res = await updateUser({ userId, ...data });
-        console.log(res);
+        const res = await updateUser({ userId, token, ...data });
+        setChangedFields(res);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setIsRegisterFailed(true);
-        setRegistrationErrorMessage(error.response?.data?.message);
+        setIsChangeFailed(true);
+        setChangeErrorMessage(error.response?.data?.message);
       }
       console.log(error);
     }
@@ -56,15 +64,22 @@ const ChangeProfileForm = () => {
     <div className='h-full w-full flex flex-col items-center justify-evenly'>
       <div
         className={
-          isRegisterFailed
+          isChangeFailed || isChangeComplete
             ? 'bg-black bg-opacity-50 fixed h-screen w-screen top-0 left-0'
             : 'hidden'
         }
       ></div>
       <ErrorModal
-        isActive={isRegisterFailed}
-        onModalCloseHandler={onModalCloseHandler}
-        message={registrationErrorMessage}
+        isActive={isChangeFailed}
+        onModalCloseHandler={onErrorModalCloseHandler}
+        message={changeErrorMessage}
+      />
+      <ChangeUserModal
+        isActive={isChangeComplete}
+        onModalCloseHandler={onChangeModalCloseHandler}
+        newName={changedFields?.name}
+        newPassword={changedFields?.password}
+        newTag={changedFields?.tag}
       />
       <div className='h-2/3 w-full flex flex-col items-center justify-evenly'>
         <h2 className='text-4xl font-bold'>Change your data</h2>
@@ -76,7 +91,7 @@ const ChangeProfileForm = () => {
             <Controller
               control={control}
               name='name'
-              rules={nameValidation}
+              rules={nameChangeValidation}
               render={({ field }) => (
                 <MyInput
                   placeholder='name'
@@ -96,7 +111,7 @@ const ChangeProfileForm = () => {
             <Controller
               control={control}
               name='tag'
-              rules={tagValidation}
+              rules={tagChangeValidation}
               render={({ field }) => (
                 <MyInput
                   placeholder='tag'
@@ -116,7 +131,7 @@ const ChangeProfileForm = () => {
             <Controller
               control={control}
               name='password'
-              rules={passwordValidation}
+              rules={passwordChangeValidation}
               render={({ field }) => (
                 <MyInput
                   placeholder='password'

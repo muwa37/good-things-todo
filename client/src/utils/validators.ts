@@ -42,3 +42,33 @@ export const passwordValidation = {
     return true;
   },
 };
+
+export const nameChangeValidation = {
+  validate: (value: string | undefined) => {
+    if (value?.match(/[а-яА-Я]/)) {
+      return 'name must not contain russian letters';
+    }
+
+    return true;
+  },
+};
+
+export const tagChangeValidation = {
+  validate: (value: string | undefined) => {
+    if (value?.match(/[а-яА-Я]/)) {
+      return 'tag must not contain russian letters';
+    }
+
+    return true;
+  },
+};
+
+export const passwordChangeValidation = {
+  validate: (value: string | undefined) => {
+    if ((value && value.length < 6) || (value && value.length > 20)) {
+      return 'password must contain more then 6 symbols and less then 20';
+    }
+
+    return true;
+  },
+};

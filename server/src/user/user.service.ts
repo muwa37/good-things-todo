@@ -49,6 +49,23 @@ export class UserService {
     const oldUser = await this.userModel.findById(id).lean().exec();
     if (!oldUser) return null;
 
+    if (updateUserDTO.tag) {
+      const existingUserWithSameTag = await this.userModel
+        .findOne({ tag: updateUserDTO.tag })
+        .lean()
+        .exec();
+
+      if (
+        existingUserWithSameTag &&
+        existingUserWithSameTag._id.toString() !== id.toString()
+      ) {
+        throw new HttpException(
+          'this tag is already taken',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+
     await this.userModel.findByIdAndUpdate(id, updateUserDTO, { new: true });
 
     const newUser = await this.userModel.findById(id).lean().exec();

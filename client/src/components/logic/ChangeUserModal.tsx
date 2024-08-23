@@ -47,6 +47,7 @@ const ChangeUserModal = ({
               <p className='italic'>{newPassword}</p>
             </h3>
           )}
+          <h2 className='text-3xl font-bold'>Please re login...</h2>
         </div>
       </div>
     </div>

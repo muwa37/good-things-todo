@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getTodosById, updateTodo } from '../api/todo';
+import CreateTodoForm from '../components/logic/CreateTodoForm';
 import ErrorModal from '../components/logic/ErrorModal';
 import TodoItem from '../components/logic/TodoItem';
 import PageTitle from '../components/ui/PageTitle';
@@ -32,10 +33,14 @@ const TodoList = () => {
     };
 
     fetchTodos();
-  }, []);
+  }, [token, userId]);
 
   const onErrorModalCloseHandler = () => {
     setIsLoadingFailed(false);
+  };
+
+  const addNewTodo = (newTodo: Todo) => {
+    setTodoList((prevTodos) => [...prevTodos, newTodo]);
   };
 
   const toggleTodoIsDone = async (todoId: string, isDone: boolean) => {
@@ -83,9 +88,10 @@ const TodoList = () => {
       <PageTitle pageTitle='Your Good Things ToDo' />
 
       <div className='h-full w-full flex flex-col items-center justify-evenly'>
-        <h3 className='text-2xl font-bold'>
+        <h3 className='text-3xl font-bold'>
           make world a bit better step by step :)
         </h3>
+        <CreateTodoForm onTodoCreated={addNewTodo} />
         <ul className=' w-2/3 h-3/4 flex flex-col items-center justify-start overflow-hidden'>
           {todoList.map((todo) => (
             <TodoItem

@@ -2,12 +2,18 @@ import axios from 'axios';
 
 export const createTodo = async (
   userId: string,
+  token: string,
   title: string,
   isDone: boolean = false
 ) => {
   const { data } = await axios.post(
     `${import.meta.env.VITE_API_URL}todo/${userId}`,
-    { title, isDone }
+    { title, isDone },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return data;

@@ -72,3 +72,18 @@ export const passwordChangeValidation = {
     return true;
   },
 };
+
+export const createTodoValidation = {
+  required: REQUIRED_FIELD,
+  validate: (value: string | undefined) => {
+    if (value === undefined) {
+      return 'field is required';
+    }
+
+    if (value.match(/[а-яА-Я]/)) {
+      return 'name must not contain russian letters';
+    }
+
+    return true;
+  },
+};

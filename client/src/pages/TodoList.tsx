@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getTodosById, updateTodo } from '../api/todo';
+import { deleteTodo, getTodosById, updateTodo } from '../api/todo';
 import CreateTodoForm from '../components/logic/CreateTodoForm';
 import ErrorModal from '../components/logic/ErrorModal';
 import TodoItem from '../components/logic/TodoItem';
@@ -91,6 +91,26 @@ const TodoList = () => {
     return null;
   };
 
+  const removeTodo = async (todoId: string) => {
+    try {
+      if (userId) {
+        const removedTodoId = await deleteTodo(todoId, token);
+        if (removedTodoId) {
+          setTodoList((prevTodoList) =>
+            prevTodoList.filter((todo) => todo.id !== todoId)
+          );
+          return removedTodoId;
+        }
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setIsLoadingFailed(true);
+        setLoadingErrorMessage(error.response?.data?.message);
+      }
+    }
+    return null;
+  };
+
   return (
     <section className='flex flex-col w-full h-full items-center justify-evenly'>
       <div
@@ -121,6 +141,7 @@ const TodoList = () => {
               todo={todo}
               toggleIsDone={toggleTodoIsDone}
               changeTodoTitle={changeTodoTitle}
+              deleteTodo={removeTodo}
             />
           ))}
         </ul>

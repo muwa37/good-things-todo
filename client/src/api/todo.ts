@@ -56,9 +56,14 @@ export const updateTodo = async ({
   return data;
 };
 
-export const deleteTodo = async (todoId: string) => {
+export const deleteTodo = async (todoId: string, token: string) => {
   const { data } = await axios.delete(
-    `${import.meta.env.VITE_API_URL}todo/${todoId}`
+    `${import.meta.env.VITE_API_URL}todo/${todoId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return data;

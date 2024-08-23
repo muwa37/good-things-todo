@@ -1,16 +1,29 @@
 import { useState } from 'react';
 import { Todo } from '../../types/common';
 import { EditableSpan } from '../ui/EditableSpan';
+import MyButton from '../ui/MyButton';
 import MyLi from '../ui/MyLi';
 
 type Props = {
   todo: Todo;
   toggleIsDone?: (todoId: string, isDone: boolean) => Promise<Todo>;
   changeTodoTitle?: (todoId: string, newTitle: string) => Promise<Todo>;
+  deleteTodo?: (todoId: string) => Promise<Pick<Todo, 'id'>>;
 };
 
-const TodoItem = ({ todo, toggleIsDone, changeTodoTitle }: Props) => {
+const TodoItem = ({
+  todo,
+  toggleIsDone,
+  changeTodoTitle,
+  deleteTodo,
+}: Props) => {
   const [currentTodo, setCurrentTodo] = useState(todo);
+
+  const onDeleteTodoHandler = async () => {
+    if (deleteTodo) {
+      return await deleteTodo(currentTodo.id);
+    }
+  };
 
   const onToggleClick = async () => {
     if (toggleIsDone) {
@@ -31,7 +44,7 @@ const TodoItem = ({ todo, toggleIsDone, changeTodoTitle }: Props) => {
 
   return (
     <div
-      className={`w-full p-2 flex items-center ${
+      className={`w-full p-2 flex items-center justify-between ${
         currentTodo.isDone ? 'text-green-700 line-through ' : 'text-blue-300'
       }`}
     >
@@ -54,6 +67,9 @@ const TodoItem = ({ todo, toggleIsDone, changeTodoTitle }: Props) => {
         />
       ) : (
         <MyLi liTitle={currentTodo.title} />
+      )}
+      {deleteTodo && (
+        <MyButton buttonText='delete' onClickFn={onDeleteTodoHandler} />
       )}
     </div>
   );

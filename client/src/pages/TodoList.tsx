@@ -40,13 +40,21 @@ const TodoList = () => {
   };
 
   const addNewTodo = (newTodo: Todo) => {
-    setTodoList((prevTodos) => [...prevTodos, newTodo]);
+    setTodoList((prevTodoList) => [...prevTodoList, newTodo]);
   };
 
   const toggleTodoIsDone = async (todoId: string, isDone: boolean) => {
     try {
       if (userId) {
-        return await updateTodo({ todoId, token, isDone });
+        const updatedTodo = await updateTodo({ todoId, token, isDone });
+        if (updatedTodo) {
+          setTodoList((prevTodoList) =>
+            prevTodoList.map((todo) =>
+              todo.id === todoId ? updatedTodo : todo
+            )
+          );
+          return updatedTodo;
+        }
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -54,12 +62,25 @@ const TodoList = () => {
         setLoadingErrorMessage(error.response?.data?.message);
       }
     }
+    return null;
   };
 
   const changeTodoTitle = async (todoId: string, newTitle: string) => {
     try {
       if (userId) {
-        return await updateTodo({ todoId, token, title: newTitle });
+        const updatedTodo = await updateTodo({
+          todoId,
+          token,
+          title: newTitle,
+        });
+        if (updatedTodo) {
+          setTodoList((prevTodoList) =>
+            prevTodoList.map((todo) =>
+              todo.id === todoId ? updatedTodo : todo
+            )
+          );
+          return updatedTodo;
+        }
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -67,6 +88,7 @@ const TodoList = () => {
         setLoadingErrorMessage(error.response?.data?.message);
       }
     }
+    return null;
   };
 
   return (
@@ -92,7 +114,7 @@ const TodoList = () => {
           make world a bit better step by step :)
         </h3>
         <CreateTodoForm onTodoCreated={addNewTodo} />
-        <ul className=' w-2/3 h-3/4 flex flex-col items-center justify-start overflow-hidden'>
+        <ul className=' w-2/3 h-[300px] flex flex-col items-center justify-start overflow-auto'>
           {todoList.map((todo) => (
             <TodoItem
               key={todo.id}

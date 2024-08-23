@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { TodoDTO } from './todo.dto';
+import { TodoDTO, UpdateTodoDTO } from './todo.dto';
 import { TodoService } from './todo.service';
 
 @Controller('/todo')
@@ -34,7 +34,10 @@ export class TodoController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  async update(@Param('id') id: ObjectId, @Body() updateTodoDTO: TodoDTO) {
+  async update(
+    @Param('id') id: ObjectId,
+    @Body() updateTodoDTO: UpdateTodoDTO,
+  ) {
     return await this.todoService.update(id, updateTodoDTO);
   }
 

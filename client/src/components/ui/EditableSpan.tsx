@@ -7,7 +7,7 @@ type Props = {
 };
 
 export const EditableSpan: React.FC<Props> = React.memo(
-  ({ title, changeTitle }: Props) => {
+  ({ title, changeTitle }) => {
     const [editMode, setEditMode] = useState(false);
     const [inputTitle, setInputTitle] = useState('');
 
@@ -31,6 +31,7 @@ export const EditableSpan: React.FC<Props> = React.memo(
         onChange={onChangeTitleHandler}
         onBlur={activateViewMode}
         type='text'
+        autoFocus
       />
     ) : (
       <span onDoubleClick={activateEditMode}>{title}</span>

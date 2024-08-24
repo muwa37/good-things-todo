@@ -1,4 +1,8 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getTodosById } from '../../api/todo';
+import { selectToken } from '../../store/user/selectors';
 import { Todo, User } from '../../types/common';
 import MyButton from '../ui/MyButton';
 import TodoItem from './TodoItem';
@@ -7,23 +11,39 @@ type Props = {
   isActive: boolean;
   onModalCloseHandler: () => void;
   chosenFriend: User | null;
+  setIsLoadingFailed: React.Dispatch<React.SetStateAction<boolean>>;
+  setLoadingErrorMessage: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const FriendModal = ({
   isActive,
   onModalCloseHandler,
   chosenFriend,
+  setIsLoadingFailed,
+  setLoadingErrorMessage,
 }: Props) => {
+  const token = useSelector(selectToken);
+
   const [chosenFriendTodoList, setChosenFriendTodoList] = useState<Todo[]>([]);
 
-  useEffect(
-    () =>
-      setChosenFriendTodoList([
-        { title: 'test', isDone: false, id: 'asddas2d' },
-        { title: 'example', isDone: true, id: 'asdcxzc' },
-      ]),
-    []
-  );
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        if (chosenFriend) {
+          const res = await getTodosById(chosenFriend.id, token);
+          setChosenFriendTodoList(res);
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          setIsLoadingFailed(true);
+          setLoadingErrorMessage(error.response?.data?.message);
+        }
+      }
+    };
+
+    fetchTodos();
+  }, [token, chosenFriend, setIsLoadingFailed, setLoadingErrorMessage]);
+
   return (
     <div
       className={

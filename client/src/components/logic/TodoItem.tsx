@@ -50,7 +50,9 @@ const TodoItem = ({
     >
       <button
         onClick={onToggleClick}
-        className={`hover:border-fuchsia-300  size-8 rounded-full border-2  mr-4 relative ${
+        className={`${
+          toggleIsDone && 'hover:border-fuchsia-300'
+        } size-8 rounded-full border-2  mr-4 relative ${
           currentTodo.isDone ? 'border-green-700' : 'border-blue-300'
         }`}
       >

@@ -124,6 +124,8 @@ const Friends = () => {
         isActive={isModalActive}
         onModalCloseHandler={onModalCloseHandler}
         chosenFriend={chosenFriend}
+        setIsLoadingFailed={setIsLoadingFailed}
+        setLoadingErrorMessage={setLoadingErrorMessage}
       />
 
       <PageTitle pageTitle='Friends' />

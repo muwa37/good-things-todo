@@ -141,11 +141,9 @@ export class UserService {
     if (isAlreadyFriend)
       throw new HttpException('already friend', HttpStatus.BAD_REQUEST);
 
-    // Добавляем друга
     user.friends.push(friendObjectId);
     await user.save();
 
-    // Получаем информацию о друзьях
     const friends = await this.userModel
       .find({
         _id: { $in: user.friends },
@@ -154,7 +152,56 @@ export class UserService {
       .lean()
       .exec();
 
-    // Форматируем результат
+    return friends.map((friend) => ({
+      id: friend._id,
+      name: friend.name,
+      tag: friend.tag,
+    }));
+  }
+
+  async removeFriend(
+    userId: ObjectId,
+    friendId: string,
+  ): Promise<
+    | {
+        id: mongoose.Types.ObjectId;
+        name: string;
+        tag: string;
+      }[]
+    | null
+  > {
+    if (userId.toString() === friendId) {
+      throw new HttpException(
+        'cannot remove yourself from friends',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const user = await this.userModel.findById(userId);
+    if (!user) return null;
+
+    const friendObjectId = new mongoose.Types.ObjectId(friendId);
+
+    const isFriend = user.friends.some((friend) =>
+      friend.equals(friendObjectId),
+    );
+
+    if (!isFriend)
+      throw new HttpException('not a friend', HttpStatus.BAD_REQUEST);
+
+    user.friends = user.friends.filter(
+      (friend) => !friend.equals(friendObjectId),
+    );
+    await user.save();
+
+    const friends = await this.userModel
+      .find({
+        _id: { $in: user.friends },
+      })
+      .select('_id name tag')
+      .lean()
+      .exec();
+
     return friends.map((friend) => ({
       id: friend._id,
       name: friend.name,

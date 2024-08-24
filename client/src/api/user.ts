@@ -39,10 +39,37 @@ export const getFriendById = async (friendId: string, token: string) => {
   return data;
 };
 
-export const addFriend = async (userId: string, friendId: string) => {
+export const addFriend = async (
+  userId: string,
+  token: string,
+  friendId: string
+) => {
   const { data } = await axios.patch(
     `${import.meta.env.VITE_API_URL}users/addFriend/${userId}`,
-    { friendId }
+    { friendId },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return data;
+};
+
+export const removeFriend = async (
+  userId: string,
+  token: string,
+  friendId: string
+) => {
+  const { data } = await axios.patch(
+    `${import.meta.env.VITE_API_URL}users/removeFriend/${userId}`,
+    { friendId },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return data;

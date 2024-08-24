@@ -51,6 +51,12 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Patch('/removeFriend/:id')
+  async removeFriend(@Param('id') id: ObjectId, @Body() friendDTO: FriendDTO) {
+    return await this.userService.removeFriend(id, friendDTO.friendId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async delete(@Param('id') id: ObjectId) {
     return await this.userService.delete(id);

@@ -13,11 +13,22 @@ export class UserService {
     return user;
   }
 
-  async searchByTag(tag: string): Promise<UserDocument[]> {
+  async searchByTag(tag: string): Promise<
+    | {
+        id: mongoose.Types.ObjectId;
+        name: string;
+        tag: string;
+      }[]
+    | null
+  > {
     const users = await this.userModel.find({
       tag: { $regex: new RegExp(tag) },
     });
-    return users;
+    return users.map((user) => ({
+      id: user._id,
+      name: user.name,
+      tag: user.tag,
+    }));
   }
 
   async getOneByTag(tag: string): Promise<UserDocument | null> {
@@ -33,13 +44,32 @@ export class UserService {
     throw new HttpException('user not found', HttpStatus.BAD_REQUEST);
   }
 
-  async getFriendsById(
-    userId: ObjectId,
-  ): Promise<mongoose.Types.ObjectId[] | null> {
+  async getFriendsById(userId: ObjectId): Promise<
+    | {
+        id: mongoose.Types.ObjectId;
+        name: string;
+        tag: string;
+      }[]
+    | null
+  > {
     const user = await this.userModel.findById(userId).lean().exec();
     if (!user) return null;
 
-    return user.friends;
+    if (!user.friends || user.friends.length === 0) return [];
+
+    const friends = await this.userModel
+      .find({
+        _id: { $in: user.friends },
+      })
+      .select('_id name tag')
+      .lean()
+      .exec();
+
+    return friends.map((friend) => ({
+      id: friend._id,
+      name: friend.name,
+      tag: friend.tag,
+    }));
   }
 
   async update(
@@ -84,7 +114,14 @@ export class UserService {
   async addFriend(
     userId: ObjectId,
     friendId: string,
-  ): Promise<mongoose.Types.ObjectId[] | null> {
+  ): Promise<
+    | {
+        id: mongoose.Types.ObjectId;
+        name: string;
+        tag: string;
+      }[]
+    | null
+  > {
     if (userId.toString() === friendId) {
       throw new HttpException(
         'can not add yourself to friend',
@@ -104,12 +141,25 @@ export class UserService {
     if (isAlreadyFriend)
       throw new HttpException('already friend', HttpStatus.BAD_REQUEST);
 
-    if (!isAlreadyFriend) {
-      user.friends.push(friendObjectId);
-      await user.save();
-    }
+    // Добавляем друга
+    user.friends.push(friendObjectId);
+    await user.save();
 
-    return this.getFriendsById(userId);
+    // Получаем информацию о друзьях
+    const friends = await this.userModel
+      .find({
+        _id: { $in: user.friends },
+      })
+      .select('_id name tag')
+      .lean()
+      .exec();
+
+    // Форматируем результат
+    return friends.map((friend) => ({
+      id: friend._id,
+      name: friend.name,
+      tag: friend.tag,
+    }));
   }
 
   async delete(id: ObjectId): Promise<Pick<UserDocument, '_id'>> {

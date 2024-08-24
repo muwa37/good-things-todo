@@ -1,43 +1,61 @@
+import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getFriendsById, searchUsersByTag } from '../api/user';
+import ErrorModal from '../components/logic/ErrorModal';
 import FriendModal from '../components/logic/FriendModal';
 import MyButton from '../components/ui/MyButton';
 import MyInput from '../components/ui/MyInput';
 import PageTitle from '../components/ui/PageTitle';
+import { selectToken, selectUser } from '../store/user/selectors';
 import { User } from '../types/common';
 
 const Friends = () => {
+  const userId = useSelector(selectUser)?.id;
+  const token = useSelector(selectToken);
+
   const [searchValue, setSearchValue] = useState<string>('');
   const [friends, setFriends] = useState<User[]>([]);
-  const [foundedUsers, setFoundedUsers] = useState<User[]>([
-    {
-      name: 'sample',
-      tag: 'sample',
-      id: 'asds',
-    },
-    { name: 'example2', tag: 'example2', id: 'dsazx' },
-  ]);
+  const [foundedUsers, setFoundedUsers] = useState<User[]>([]);
   const [isModalActive, setIsModalActive] = useState<boolean>(false);
   const [chosenFriend, setChosenFriend] = useState<User | null>(null);
+  const [isLoadingFailed, setIsLoadingFailed] = useState(false);
+  const [loadingErrorMessage, setLoadingErrorMessage] = useState('');
 
   useEffect(() => {
-    setFriends([
-      {
-        name: 'test',
-        tag: 'test',
-
-        id: 'asd',
-      },
-      { name: 'test2', tag: 'test2', id: 'dsa' },
-    ]);
-  }, []);
+    const fetchFriends = async () => {
+      try {
+        if (userId) {
+          const friends = await getFriendsById(userId, token);
+          setFriends(friends);
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          setIsLoadingFailed(true);
+          setLoadingErrorMessage(error.response?.data?.message);
+        }
+      }
+    };
+    fetchFriends();
+  }, [userId, token]);
 
   const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
-  const onSearchHandler = () => {
-    console.log(searchValue);
-    setFoundedUsers([]);
+
+  const onSearchHandler = async () => {
+    try {
+      const users = await searchUsersByTag(searchValue, token);
+      console.log(users);
+      setFoundedUsers(users);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setIsLoadingFailed(true);
+        setLoadingErrorMessage(error.response?.data?.message);
+      }
+    }
   };
+
   const onFriendClickHandler = (friend: User) => {
     setIsModalActive(true);
     setChosenFriend(friend);
@@ -46,6 +64,10 @@ const Friends = () => {
   const onModalCloseHandler = () => {
     setIsModalActive(false);
     setChosenFriend(null);
+  };
+
+  const onErrorModalCloseHandler = () => {
+    setIsLoadingFailed(false);
   };
 
   return (
@@ -59,15 +81,23 @@ const Friends = () => {
             : 'hidden'
         }
       ></div>
+
+      <ErrorModal
+        isActive={isLoadingFailed}
+        onModalCloseHandler={onErrorModalCloseHandler}
+        message={loadingErrorMessage}
+      />
+
       <FriendModal
         isActive={isModalActive}
         onModalCloseHandler={onModalCloseHandler}
         chosenFriend={chosenFriend}
       />
+
       <PageTitle pageTitle='Friends' />
       <div className='h-full w-full flex flex-col items-center justify-evenly'>
         <div className='h-1/4 flex flex-col justify-evenly items-center'>
-          <h3 className='text-xl font-bold'>
+          <h3 className='text-xl font-bold text-blue-300'>
             looking for someone? type in unique user tag!
           </h3>
           <div className='flex items-center justify-center'>
@@ -81,11 +111,10 @@ const Friends = () => {
           </div>
         </div>
         <div className='h-full w-2/3 flex flex-col'>
-          <div className='h-1/2 overflow-auto'>
+          <div className='h-[300px] w-full overflow-auto flex flex-col items-center justify-start '>
             {foundedUsers.map((user) => (
               <div
                 key={user.tag}
-                onClick={() => onFriendClickHandler(user)}
                 className='flex items-center justify-start p-2 m-2'
               >
                 <p>{user.name} -</p>
@@ -94,16 +123,18 @@ const Friends = () => {
             ))}
           </div>
           <div className='h-1/2 flex flex-col items-center '>
-            <h3 className='text-xl font-bold'>your friends list</h3>
-            <div className='h-full w-full overflow-auto'>
+            <h3 className='text-xl font-bold text-blue-300'>
+              your friends list
+            </h3>
+            <div className='h-[300px] w-full overflow-auto flex flex-col items-center justify-start '>
               {friends.map((friend) => (
                 <div
                   key={friend.tag}
                   onClick={() => onFriendClickHandler(friend)}
                   className='flex items-center justify-start p-2 m-2'
                 >
-                  <p>{friend.name} -</p>
-                  <p>({friend.tag})</p>
+                  <p>{friend.name} - </p>
+                  <p className='italic'>@{friend.tag}</p>
                 </div>
               ))}
             </div>

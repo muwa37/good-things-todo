@@ -1,16 +1,39 @@
 import axios from 'axios';
 
-export const searchUserByTag = async (tag: string) => {
+export const searchUsersByTag = async (tag: string, token: string) => {
   const { data } = await axios.get(
-    `${import.meta.env.VITE_API_URL}users/searchByTag/search?query=${tag}`
+    `${import.meta.env.VITE_API_URL}users/searchByTag?query=${tag}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return data;
 };
 
-export const getFriendsById = async (userId: string) => {
+export const getFriendsById = async (userId: string, token: string) => {
   const { data } = await axios.get(
-    `${import.meta.env.VITE_API_URL}users/getFriends/${userId}`
+    `${import.meta.env.VITE_API_URL}users/getFriends/${userId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return data;
+};
+
+export const getFriendById = async (friendId: string, token: string) => {
+  const { data } = await axios.get(
+    `${import.meta.env.VITE_API_URL}users/getOneById/${friendId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return data;

@@ -17,16 +17,16 @@ const About = () => {
             <div className='h-full flex flex-col items-center justify-start '>
               <h4 className='text-3xl font-bold'>Frontend:</h4>
               <ul className='h-full flex flex-col items-center justify-start '>
-                {frontendTechNames.map((techName) => (
-                  <MyLi liTitle={techName} />
+                {frontendTechNames.map((techName, ind) => (
+                  <MyLi liTitle={techName} key={ind} />
                 ))}
               </ul>
             </div>
             <div className='h-full flex flex-col items-center justify-start '>
               <h4 className='text-3xl font-bold'>Backend:</h4>
               <ul className='h-full flex flex-col items-center justify-start '>
-                {backendTechNames.map((techName) => (
-                  <MyLi liTitle={techName} />
+                {backendTechNames.map((techName, ind) => (
+                  <MyLi liTitle={techName} key={ind} />
                 ))}
               </ul>
             </div>

@@ -101,9 +101,14 @@ export const updateUser = async ({
   return data;
 };
 
-export const deleteUser = async (userId: string) => {
+export const deleteUser = async (userId: string, token: string) => {
   const { data } = await axios.delete(
-    `${import.meta.env.VITE_API_URL}users/${userId}`
+    `${import.meta.env.VITE_API_URL}users/${userId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return data;

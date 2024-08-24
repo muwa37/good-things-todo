@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, ObjectId } from 'mongoose';
 import { User, UserDocument } from 'src/user/user.schema';
-import { TodoDTO } from './todo.dto';
+import { TodoDTO, UpdateTodoDTO } from './todo.dto';
 import { Todo, TodoDocument } from './todo.schema';
 
 type TodoData = {
@@ -50,7 +50,7 @@ export class TodoService {
     return todos.map(this.mapTodoData);
   }
 
-  async update(id: ObjectId, updateTodoDTO: TodoDTO): Promise<TodoData> {
+  async update(id: ObjectId, updateTodoDTO: UpdateTodoDTO): Promise<TodoData> {
     const todo = await this.todoModel
       .findByIdAndUpdate(id, updateTodoDTO, { new: true })
       .lean()

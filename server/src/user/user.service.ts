@@ -4,54 +4,40 @@ import mongoose, { Model, ObjectId } from 'mongoose';
 import { UpdateUserDTO, UserDTO } from './user.dto';
 import { User, UserDocument } from './user.schema';
 
+type UserData = {
+  id: mongoose.Types.ObjectId;
+  name: string;
+  tag: string;
+};
+
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async create(createUserDTO: UserDTO): Promise<UserDocument> {
-    const user = await this.userModel.create({ ...createUserDTO });
-    return user;
+    return await this.userModel.create({ ...createUserDTO });
   }
 
-  async searchByTag(tag: string): Promise<
-    | {
-        id: mongoose.Types.ObjectId;
-        name: string;
-        tag: string;
-      }[]
-    | null
-  > {
+  async searchByTag(tag: string): Promise<UserData[] | null> {
     const users = await this.userModel.find({
-      tag: { $regex: new RegExp(tag) },
+      tag: { $regex: new RegExp(tag, 'i') },
     });
-    return users.map((user) => ({
-      id: user._id,
-      name: user.name,
-      tag: user.tag,
-    }));
+    return users.map(({ _id, name, tag }) => ({ id: _id, name, tag }));
   }
 
   async getOneByTag(tag: string): Promise<UserDocument | null> {
-    const user = await this.userModel.findOne({
-      tag: tag,
-    });
-    return user;
+    return this.userModel.findOne({ tag });
   }
 
   async getOneById(id: ObjectId): Promise<UserDocument> {
     const user = await this.userModel.findById(id);
-    if (user) return user;
-    throw new HttpException('user not found', HttpStatus.BAD_REQUEST);
+    if (!user) {
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+    }
+    return user;
   }
 
-  async getFriendsById(userId: ObjectId): Promise<
-    | {
-        id: mongoose.Types.ObjectId;
-        name: string;
-        tag: string;
-      }[]
-    | null
-  > {
+  async getFriendsById(userId: ObjectId): Promise<UserData[] | null> {
     const user = await this.userModel.findById(userId).lean().exec();
     if (!user) return null;
 
@@ -114,14 +100,7 @@ export class UserService {
   async addFriend(
     userId: ObjectId,
     friendId: string,
-  ): Promise<
-    | {
-        id: mongoose.Types.ObjectId;
-        name: string;
-        tag: string;
-      }[]
-    | null
-  > {
+  ): Promise<UserData[] | null> {
     if (userId.toString() === friendId) {
       throw new HttpException(
         'can not add yourself to friend',
@@ -209,17 +188,15 @@ export class UserService {
     }));
   }
 
-  async delete(id: ObjectId): Promise<Pick<UserDocument, '_id'>> {
+  async delete(id: ObjectId): Promise<{ _id: mongoose.Types.ObjectId }> {
     const user = await this.userModel
       .findByIdAndDelete(id)
       .select('_id')
       .lean()
       .exec();
-
-    if (user) {
-      return user._id;
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-
-    throw new HttpException('user not found', HttpStatus.INTERNAL_SERVER_ERROR);
+    return user;
   }
 }
